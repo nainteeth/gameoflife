@@ -2,7 +2,6 @@ import processing.core.PApplet;
 
 public class Main extends PApplet {
 
-    // Stabile 8 pixel Auflösung pro Feld
     int feldgroeße = 8;
     int reihen = 100;
     int spalten = 100;
@@ -18,14 +17,12 @@ public class Main extends PApplet {
         // Gehe alle Nachbarwerte ab und überprüfe ob sie 1 sind.
         // Wenn ja, dann addiere 1 zur Nachbaranzahl
         // Bei Randwerten wird auf die andere Seite gesprungen.
-        // donuts sind lecker
         int nachbarn = 0;
             for (int h=-1; h < 2; h++) {
                 for (int v=-1; v < 2; v++) {
                     if (h == 0 && v == 0) {
                         continue;
                     }
-                    // mod is cool weil donut
                     int nachbarnX = (x + v + spalten) % spalten;
                     int nachbarnY = (y + h + reihen) % reihen;
                     if (this.aktuellerScreen[nachbarnX][nachbarnY] == 1) {
@@ -37,13 +34,12 @@ public class Main extends PApplet {
     }
 
     public void settings() {
-        size(800, 800); // Ultra HD 8k gaming
+        size(800, 800);
     }
 
     public void setup() {
         for (int x=0; x < spalten; x++) {
             for (int y=0; y < reihen; y++) {
-                // Hier kann man Dichte machen, wenn man mal nicht ganz dicht ist.
                 if (random(1) > 0.8) {
                     this.aktuellerScreen[x][y] = 1;
                 } else {
@@ -52,7 +48,7 @@ public class Main extends PApplet {
             }
         }
         background(0);
-        frameRate(3); // Flüssige 10 FPS
+        frameRate(4);
     }
 
     public void draw() {
@@ -69,20 +65,17 @@ public class Main extends PApplet {
             for (int y=0; y < reihen; y++) {
                 int nachbarn = nachbarnZaehlen(x,y);
 
-                // Regeln
-		if (aktuellerScreen[x][y] == 1) {
-		    if (nachbarn == 2 || nachbarn == 3) {
-			folgenderScreen[x][y] = 1;
-		    } else {
-			folgenderScreen[x][y] = 0;
-		    }
-		} else {
-		    if (nachbarn == 3) {
-			folgenderScreen[x][y] = 1;
-		    } else {
-			folgenderScreen[x][y] = 0;
-		    }
-		}
+        if (aktuellerScreen[x][y] == 1) {
+            if (nachbarn == 2 || nachbarn == 3) {
+                folgenderScreen[x][y] = 1;
+            } else { folgenderScreen[x][y] = 0; }
+        } else {
+            if (nachbarn == 3) {
+                folgenderScreen[x][y] = 1;
+            } else {
+                folgenderScreen[x][y] = 0;
+            }
+        }
             }
         }
         // Frame updaten.
