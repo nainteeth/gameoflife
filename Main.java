@@ -1,18 +1,24 @@
 import processing.core.PApplet;
 
 public class Main extends PApplet {
+    // Attribute
+    int fensterhoehe = 1080;
+    int fensterbreite = 1920;
+    int feldgroeße = 16;
+    // Dichte für die Zufallswerte
+    double dichte = 0.15;
 
-    int feldgroeße = 8;
-    int reihen = 100;
-    int spalten = 100;
+    int reihen = fensterhoehe/feldgroeße;
+    int spalten = fensterbreite/feldgroeße;
     int[][] aktuellerScreen = new int[spalten][reihen];
     int[][] folgenderScreen = new int[spalten][reihen];
+    boolean pausiert = false;
 
+    // Main Methode
     public static void main(String[] args) {
-        // processing library tut dinge:
-        // der macht settings einmal, setup einmal und looped durch draw
-        PApplet.main("Main");
+        PApplet.main("Main"); // Führt settings, setup und draw aus.
     }
+
     public int nachbarnZaehlen(int x,int y) {
         // Gehe alle Nachbarwerte ab und überprüfe ob sie 1 sind.
         // Wenn ja, dann addiere 1 zur Nachbaranzahl
@@ -34,37 +40,52 @@ public class Main extends PApplet {
     }
 
     public void settings() {
-        size(800, 800);
+        size(fensterbreite, fensterhoehe);
     }
 
     public void setup() {
-        for (int x=0; x < spalten; x++) {
-            for (int y=0; y < reihen; y++) {
-                if (random(1) > 0.8) {
-                    this.aktuellerScreen[x][y] = 1;
-                } else {
-                    this.aktuellerScreen[x][y] = 0;
-                }
-            }
-        }
+        // Weise aktuellerScreen zufällige Werte zu
+        zufallswerte();
+        // Hintergrundfarbe (weiß)
         background(0);
+        // Wiederholrate für draw()
         frameRate(4);
     }
 
     public void draw() {
         background(0);
-        for (int x=0; x < aktuellerScreen.length; x++) {
-            for (int y=0; y < aktuellerScreen.length; y++) {
+        // Zeichne die Werte aus aktuellerScreen
+        for (int x=0; x < spalten; x++) {
+            for (int y=0; y < reihen; y++) {
                 if (this.aktuellerScreen[x][y] == 1) {
                     fill(255);
                     rect(x*feldgroeße, y*feldgroeße, feldgroeße, feldgroeße);
                 }
             }
         }
+        if (pausiert == false) {
+            regelnAnwenden();
+        }
+    }
+    public void zufallswerte() {
+        for (int x=0; x < spalten; x++) {
+            for (int y=0; y < reihen; y++) {
+                if (random(1) > (1-dichte)) {
+                    this.aktuellerScreen[x][y] = 1;
+                } else {
+                    this.aktuellerScreen[x][y] = 0;
+                }
+            }
+        }
+    }
+
+    public void regelnAnwenden() {
+        // Zähle die Nachbarn für alle Kästen
         for (int x=0; x < spalten; x++) {
             for (int y=0; y < reihen; y++) {
                 int nachbarn = nachbarnZaehlen(x,y);
 
+        // Wende die Regeln an
         if (aktuellerScreen[x][y] == 1) {
             if (nachbarn == 2 || nachbarn == 3) {
                 folgenderScreen[x][y] = 1;
@@ -78,11 +99,40 @@ public class Main extends PApplet {
         }
             }
         }
-        // Frame updaten.
+        // Überschreibe alle Werte von aktuellerScreen mit den von folgenderScreen
         for (int x = 0; x < spalten; x++) {
             for (int y = 0; y < reihen; y++) {
                 aktuellerScreen[x][y] = folgenderScreen[x][y];
             }
+        }
+    }
+
+    public void mousePressed() {
+        int x = mouseX/feldgroeße;
+        int y = mouseY/feldgroeße;
+        if (aktuellerScreen[x][y] == 1) {
+            aktuellerScreen[x][y] = 0;
+        } else {
+            aktuellerScreen[x][y] = 1;
+        }
+    }
+    public void keyPressed() {
+        if (key == 'p') {
+            if (pausiert == true) {
+                pausiert = false;
+            } else {
+                pausiert = true;
+            }
+        }
+        if (key == 'l') {
+            for (int x=0; x < spalten; x++) {
+                for (int y=0; y < reihen; y++) {
+                    aktuellerScreen[x][y] = 0;
+                }
+            }
+        }
+        if (key == 'z') {
+            zufallswerte();
         }
     }
 }
