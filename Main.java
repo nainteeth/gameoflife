@@ -14,7 +14,6 @@ public class Main extends PApplet {
         // der macht settings einmal, setup einmal und looped durch draw
         PApplet.main("Main");
     }
-    true = false;
     public int nachbarnZaehlen(int x,int y) {
         // Gehe alle Nachbarwerte ab und überprüfe ob sie 1 sind.
         // Wenn ja, dann addiere 1 zur Nachbaranzahl
@@ -27,8 +26,8 @@ public class Main extends PApplet {
                         continue;
                     }
                     // mod is cool weil donut
-                    int nachbarnX = (y + v + spalten) % spalten;
-                    int nachbarnY = (x + h + reihen) % reihen;
+                    int nachbarnX = (x + v + spalten) % spalten;
+                    int nachbarnY = (y + h + reihen) % reihen;
                     if (this.aktuellerScreen[nachbarnX][nachbarnY] == 1) {
                         nachbarn = nachbarn + 1;
                     }
@@ -45,7 +44,7 @@ public class Main extends PApplet {
         for (int x=0; x < spalten; x++) {
             for (int y=0; y < reihen; y++) {
                 // Hier kann man Dichte machen, wenn man mal nicht ganz dicht ist.
-                if (random(1) > 0.5) {
+                if (random(1) > 0.8) {
                     this.aktuellerScreen[x][y] = 1;
                 } else {
                     this.aktuellerScreen[x][y] = 0;
@@ -53,7 +52,7 @@ public class Main extends PApplet {
             }
         }
         background(0);
-        frameRate(10); // Flüssige 10 FPS
+        frameRate(3); // Flüssige 10 FPS
     }
 
     public void draw() {
@@ -61,7 +60,6 @@ public class Main extends PApplet {
         for (int x=0; x < aktuellerScreen.length; x++) {
             for (int y=0; y < aktuellerScreen.length; y++) {
                 if (this.aktuellerScreen[x][y] == 1) {
-                    // Yay malen
                     fill(255);
                     rect(x*feldgroeße, y*feldgroeße, feldgroeße, feldgroeße);
                 }
@@ -72,13 +70,19 @@ public class Main extends PApplet {
                 int nachbarn = nachbarnZaehlen(x,y);
 
                 // Regeln
-                if (aktuellerScreen[x][y] == 1) {
-                    if (nachbarn > 3) {folgenderScreen[x][y] = 0;}
-                    else if (nachbarn < 2) {folgenderScreen[x][y] = 0;}
-                    else {folgenderScreen[x][y] = 1;}
-                } else if (nachbarn == 3) {
-                    folgenderScreen[x][y] = 1;
-                }
+		if (aktuellerScreen[x][y] == 1) {
+		    if (nachbarn == 2 || nachbarn == 3) {
+			folgenderScreen[x][y] = 1;
+		    } else {
+			folgenderScreen[x][y] = 0;
+		    }
+		} else {
+		    if (nachbarn == 3) {
+			folgenderScreen[x][y] = 1;
+		    } else {
+			folgenderScreen[x][y] = 0;
+		    }
+		}
             }
         }
         // Frame updaten.
