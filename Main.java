@@ -49,7 +49,7 @@ public class Main extends PApplet {
         // Hintergrundfarbe (weiß)
         background(0);
         // Wiederholrate für draw()
-        frameRate(4);
+        frameRate(6);
     }
 
     public void draw() {
