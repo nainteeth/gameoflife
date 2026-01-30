@@ -10,8 +10,8 @@ public class Main extends PApplet {
 
     int reihen = fensterhoehe/feldgroeße;
     int spalten = fensterbreite/feldgroeße;
-    int[][] aktuellerScreen = new int[spalten][reihen];
-    int[][] folgenderScreen = new int[spalten][reihen];
+    Feld[][] aktuellerScreen = new Feld[spalten][reihen];
+    Feld[][] folgenderScreen = new Feld[spalten][reihen];
     boolean pausiert = false;
 
     // Main Methode
@@ -31,8 +31,8 @@ public class Main extends PApplet {
                     }
                     int nachbarnX = (x + v + spalten) % spalten;
                     int nachbarnY = (y + h + reihen) % reihen;
-                    if (this.aktuellerScreen[nachbarnX][nachbarnY] == 1) {
-                        nachbarn = nachbarn + 1;
+                    if (aktuellerScreen[nachbarnX][nachbarnY].lebt) {
+                        nachbarn++;
                     }
                 }
             }
@@ -44,6 +44,18 @@ public class Main extends PApplet {
     }
 
     public void setup() {
+        // Initialisiere aktuellerScreen
+        for (int x = 0; x < aktuellerScreen.length; x++) {
+            for (int y = 0; y < aktuellerScreen[x].length; y++) {
+                aktuellerScreen[x][y] = new Feld(false, false);
+            }
+        }
+        // Initialisiere folgenderScreen
+        for (int x = 0; x < folgenderScreen.length; x++) {
+            for (int y = 0; y < folgenderScreen[x].length; y++) {
+                folgenderScreen[x][y] = new Feld(false, false);
+            }
+        }
         // Weise aktuellerScreen zufällige Werte zu
         zufallswerte();
         // Hintergrundfarbe (weiß)
@@ -57,13 +69,13 @@ public class Main extends PApplet {
         // Zeichne die Werte aus aktuellerScreen
         for (int x=0; x < spalten; x++) {
             for (int y=0; y < reihen; y++) {
-                if (this.aktuellerScreen[x][y] == 1) {
+                if (aktuellerScreen[x][y].lebt) {
                     fill(255);
                     rect(x*feldgroeße, y*feldgroeße, feldgroeße, feldgroeße);
                 }
             }
         }
-        if (pausiert == false) {
+        if (!pausiert) {
             regelnAnwenden();
         }
     }
@@ -71,9 +83,9 @@ public class Main extends PApplet {
         for (int x=0; x < spalten; x++) {
             for (int y=0; y < reihen; y++) {
                 if (random(1) > (1-dichte)) {
-                    this.aktuellerScreen[x][y] = 1;
+                    this.aktuellerScreen[x][y].lebt = true;
                 } else {
-                    this.aktuellerScreen[x][y] = 0;
+                    this.aktuellerScreen[x][y].lebt = false;
                 }
             }
         }
@@ -85,18 +97,18 @@ public class Main extends PApplet {
             for (int y=0; y < reihen; y++) {
                 int nachbarn = nachbarnZaehlen(x,y);
 
-        // Wende die Regeln an
-        if (aktuellerScreen[x][y] == 1) {
-            if (nachbarn == 2 || nachbarn == 3) {
-                folgenderScreen[x][y] = 1;
-            } else { folgenderScreen[x][y] = 0; }
-        } else {
-            if (nachbarn == 3) {
-                folgenderScreen[x][y] = 1;
-            } else {
-                folgenderScreen[x][y] = 0;
-            }
-        }
+                // Wende die Regeln an
+                if (this.aktuellerScreen[x][y].lebt) {
+                    if (nachbarn == 2 || nachbarn == 3) {
+                        this.folgenderScreen[x][y].lebt = true;
+                    } else { folgenderScreen[x][y].lebt = false; }
+                } else {
+                    if (nachbarn == 3) {
+                        this.folgenderScreen[x][y].lebt = true;
+                    } else {
+                        this.folgenderScreen[x][y].lebt = false;
+                    }
+                }
             }
         }
         aktualisiereScreen();
@@ -105,23 +117,25 @@ public class Main extends PApplet {
     // Überschreibe alle Werte von aktuellerScreen mit den von folgenderScreen
     public void aktualisiereScreen() {
         for (int x = 0; x < spalten; x++) {
-            for (int y = 0; y < reihen; y++)
-                aktuellerScreen[x][y] = folgenderScreen[x][y];
+            for (int y = 0; y < reihen; y++) {
+                aktuellerScreen[x][y].lebt = folgenderScreen[x][y].lebt;
+                aktuellerScreen[x][y].zombievirus = folgenderScreen[x][y].zombievirus;
+            }
         }
     }
 
     public void mousePressed() {
         int x = mouseX/feldgroeße;
         int y = mouseY/feldgroeße;
-        if (aktuellerScreen[x][y] == 1) {
-            aktuellerScreen[x][y] = 0;
+        if (aktuellerScreen[x][y].lebt) {
+            aktuellerScreen[x][y].lebt = false;
         } else {
-            aktuellerScreen[x][y] = 1;
+            aktuellerScreen[x][y].lebt = true;
         }
     }
     public void keyPressed() {
         if (key == 'p') {
-            if (pausiert == true) {
+            if (pausiert) {
                 pausiert = false;
             } else {
                 pausiert = true;
@@ -130,7 +144,7 @@ public class Main extends PApplet {
         if (key == 'l') {
             for (int x=0; x < spalten; x++) {
                 for (int y=0; y < reihen; y++) {
-                    aktuellerScreen[x][y] = 0;
+                    aktuellerScreen[x][y].lebt = false;
                 }
             }
         }
