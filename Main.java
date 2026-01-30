@@ -99,11 +99,14 @@ public class Main extends PApplet {
         }
             }
         }
-        // Überschreibe alle Werte von aktuellerScreen mit den von folgenderScreen
+        aktualisiereScreen();
+    }
+
+    // Überschreibe alle Werte von aktuellerScreen mit den von folgenderScreen
+    public void aktualisiereScreen() {
         for (int x = 0; x < spalten; x++) {
-            for (int y = 0; y < reihen; y++) {
+            for (int y = 0; y < reihen; y++)
                 aktuellerScreen[x][y] = folgenderScreen[x][y];
-            }
         }
     }
 
