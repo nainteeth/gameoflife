@@ -73,6 +73,11 @@ public class Main extends PApplet {
                     fill(255);
                     rect(x*feldgroeße, y*feldgroeße, feldgroeße, feldgroeße);
                 }
+		// lol
+		if (aktuellerScreen[x][y].zombievirus) {
+		    fill(0, 136, 0);
+		    rect(x*feldgroeße, y*feldgroeße, feldgroeße, feldgroeße);
+		}
             }
         }
         if (!pausiert) {
@@ -141,15 +146,22 @@ public class Main extends PApplet {
                 pausiert = true;
             }
         }
-        if (key == 'l') {
+        if (key == 'c') {
             for (int x=0; x < spalten; x++) {
                 for (int y=0; y < reihen; y++) {
                     aktuellerScreen[x][y].lebt = false;
                 }
             }
         }
-        if (key == 'z') {
+        if (key == 'r') {
             zufallswerte();
         }
+	if (key == 'z') {
+	    int x = mouseX/feldgroeße;
+	    int y = mouseY/feldgroeße;
+	    if (aktuellerScreen[x][y].lebt == true) {
+		aktuellerScreen[x][y].zombievirus = true;
+	    }
+	}
     }
 }
