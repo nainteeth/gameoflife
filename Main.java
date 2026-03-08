@@ -10,8 +10,8 @@ public class Main extends PApplet {
 
   // Wahrscheinlickeiten für die Anwendung der Regeln
   double infektionswahrscheinlichkeit = 0.5;
-  double genesungswahrscheinlichkeit = 0.05;
-  double sterbewahrscheinlichkeit = 0.02;
+  double genesungswahrscheinlichkeit = 0.02;
+  double sterbewahrscheinlichkeit = 0.3;
 
   int reihen = fensterhoehe / feldgroeße;
   int spalten = fensterbreite / feldgroeße;
@@ -31,13 +31,12 @@ public class Main extends PApplet {
     int nachbarn = 0;
     for (int h = -1; h < 2; h++) {
       for (int v = -1; v < 2; v++) {
-        if (h == 0 && v == 0) {
-          continue;
-        }
-        int nachbarnX = (x + v + spalten) % spalten;
-        int nachbarnY = (y + h + reihen) % reihen;
-        if (aktuellerScreen[nachbarnX][nachbarnY].lebt) {
-          nachbarn++;
+        if (h != 0 || v != 0) {
+          int nachbarnX = (x + v + spalten) % spalten;
+          int nachbarnY = (y + h + reihen) % reihen;
+          if (aktuellerScreen[nachbarnX][nachbarnY].lebt) {
+            nachbarn++;
+          }
         }
       }
     }
@@ -50,14 +49,12 @@ public class Main extends PApplet {
     for (int h = -2; h <= 2; h++) {
       for (int v = -2; v <= 2; v++) {
         // Das aktuelle Feld wird nicht gezählt
-        if (h == 0 && v == 0) {
-          continue;
-        }
-        int nachbarnX = (x + v + spalten) % spalten;
-        int nachbarnY = (y + h + reihen) % reihen;
-
-        if (aktuellerScreen[nachbarnX][nachbarnY].lebt && aktuellerScreen[nachbarnX][nachbarnY].infiziert) {
-          infizierteNachbarn++;
+        if (h != 0 || v != 0) {
+          int nachbarnX = (x + v + spalten) % spalten;
+          int nachbarnY = (y + h + reihen) % reihen;
+          if (aktuellerScreen[nachbarnX][nachbarnY].lebt && aktuellerScreen[nachbarnX][nachbarnY].infiziert) {
+            infizierteNachbarn++;
+          }
         }
       }
     }
@@ -91,6 +88,7 @@ public class Main extends PApplet {
 
   public void draw() {
     background(0);
+    datenDrucken(); // Drucke alle wichtigen Daten ins Terminal um Graphen zu erstellen.
     // Zeichne die Werte aus aktuellerScreen
     for (int x = 0; x < spalten; x++) {
       for (int y = 0; y < reihen; y++) {
@@ -117,9 +115,9 @@ public class Main extends PApplet {
     for (int x = 0; x < spalten; x++) {
       for (int y = 0; y < reihen; y++) {
         if (random(1) > (1 - dichte)) {
-          this.aktuellerScreen[x][y].lebt = true;
+          aktuellerScreen[x][y].lebt = true;
         } else {
-          this.aktuellerScreen[x][y].lebt = false;
+          aktuellerScreen[x][y].lebt = false;
         }
       }
     }
@@ -133,21 +131,21 @@ public class Main extends PApplet {
         int infizierteNachbarn = infizierteNachbarnZaehlen(x, y);
 
         // Wende die Regeln an
-        if (this.aktuellerScreen[x][y].lebt) {
+        if (aktuellerScreen[x][y].lebt) {
           if (nachbarn == 2 || nachbarn == 3) {
-            this.folgenderScreen[x][y].lebt = true;
+            folgenderScreen[x][y].lebt = true;
           } else {
             folgenderScreen[x][y].lebt = false;
           }
         } else {
           if (nachbarn == 3) {
-            this.folgenderScreen[x][y].lebt = true;
+            folgenderScreen[x][y].lebt = true;
           } else {
-            this.folgenderScreen[x][y].lebt = false;
+            folgenderScreen[x][y].lebt = false;
           }
         }
 
-        if (this.folgenderScreen[x][y].lebt) {
+        if (folgenderScreen[x][y].lebt) {
           if (aktuellerScreen[x][y].immun) {
             // Wenn das Feld immun ist, bleibt es immun und kann nicht infiziert sein.
             folgenderScreen[x][y].immun = true;
@@ -180,7 +178,6 @@ public class Main extends PApplet {
             }
           }
         } else {
-          // Status: Tot -> Verhindert logische Fehler
           folgenderScreen[x][y].infiziert = false;
           folgenderScreen[x][y].immun = false;
         }
@@ -198,6 +195,28 @@ public class Main extends PApplet {
         aktuellerScreen[x][y].immun = folgenderScreen[x][y].immun;
       }
     }
+  }
+
+  // Hier werden alle aktuellen Daten ins Terminal ausgegeben
+  public void datenDrucken() {
+    int lebend = 0;
+    int infiziert = 0;
+    int immun = 0;
+    for (int x = 0; x < spalten; x++) {
+      for (int y = 0; y < reihen; y++) {
+        if (aktuellerScreen[x][y].lebt == true) {
+          lebend = lebend + 1;
+        }
+        if (aktuellerScreen[x][y].infiziert == true) {
+          infiziert = infiziert + 1;
+        }
+        if (aktuellerScreen[x][y].immun == true) {
+          immun = immun + 1;
+        }
+      }
+    }
+    // frameCount ist eine von Variable von Processing, die den aktuellen Frame in der draw() Methode ausgibt.
+    System.out.println(frameCount + "," + lebend + "," + infiziert + "," + immun);
   }
 
   public void mousePressed() {
