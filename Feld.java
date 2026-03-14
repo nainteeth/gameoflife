@@ -3,9 +3,9 @@ public class Feld {
   boolean infiziert;
   boolean immun;
 
-  public Feld(boolean lebt, boolean zombievirus, boolean immun) {
+  public Feld(boolean lebt, boolean infiziert, boolean immun) {
     this.lebt = lebt;
-    this.infiziert = zombievirus;
+    this.infiziert = infiziert;
     this.immun = immun;
   }
 }
