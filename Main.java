@@ -4,7 +4,7 @@ public class Main extends PApplet {
   // Attribute
   int fensterhoehe = 1080;
   int fensterbreite = 1920;
-  int feldgroeße = 16;
+  int feldgroesse = 16;
   // Dichte für die Zufallswerte
   double dichte = 0.15;
 
@@ -13,8 +13,8 @@ public class Main extends PApplet {
   double genesungswahrscheinlichkeit = 0.02;
   double sterbewahrscheinlichkeit = 0.3;
 
-  int reihen = fensterhoehe / feldgroeße;
-  int spalten = fensterbreite / feldgroeße;
+  int reihen = fensterhoehe / feldgroesse;
+  int spalten = fensterbreite / feldgroesse;
   Feld[][] aktuellerScreen = new Feld[spalten][reihen];
   Feld[][] folgenderScreen = new Feld[spalten][reihen];
   boolean pausiert = false;
@@ -80,7 +80,7 @@ public class Main extends PApplet {
     }
     // Weise aktuellerScreen zufällige Werte zu
     zufallswerte();
-    // Hintergrundfarbe (weiß)
+    // Hintergrundfarbe (weiss)
     background(0);
     // Wiederholrate für draw()
     frameRate(4);
@@ -94,15 +94,15 @@ public class Main extends PApplet {
       for (int y = 0; y < reihen; y++) {
         if (aktuellerScreen[x][y].lebt) {
           fill(255);
-          rect(x * feldgroeße, y * feldgroeße, feldgroeße, feldgroeße);
+          rect(x * feldgroesse, y * feldgroesse, feldgroesse, feldgroesse);
         }
         if (aktuellerScreen[x][y].infiziert) {
           fill(0, 136, 0);
-          rect(x * feldgroeße, y * feldgroeße, feldgroeße, feldgroeße);
+          rect(x * feldgroesse, y * feldgroesse, feldgroesse, feldgroesse);
         }
         if (aktuellerScreen[x][y].immun) {
           fill(0, 190, 255);
-          rect(x * feldgroeße, y * feldgroeße, feldgroeße, feldgroeße);
+          rect(x * feldgroesse, y * feldgroesse, feldgroesse, feldgroesse);
         }
       }
     }
@@ -215,13 +215,14 @@ public class Main extends PApplet {
         }
       }
     }
-    // frameCount ist eine von Variable von Processing, die den aktuellen Frame in der draw() Methode ausgibt.
+    // frameCount ist eine von Variable von Processing, die den aktuellen Frame in
+    // der draw() Methode ausgibt.
     System.out.println(frameCount + "," + lebend + "," + infiziert + "," + immun);
   }
 
   public void mousePressed() {
-    int x = mouseX / feldgroeße;
-    int y = mouseY / feldgroeße;
+    int x = mouseX / feldgroesse;
+    int y = mouseY / feldgroesse;
     if (aktuellerScreen[x][y].lebt) {
       aktuellerScreen[x][y].lebt = false;
     } else {
@@ -248,8 +249,8 @@ public class Main extends PApplet {
       zufallswerte();
     }
     if (key == 'i') {
-      int x = mouseX / feldgroeße;
-      int y = mouseY / feldgroeße;
+      int x = mouseX / feldgroesse;
+      int y = mouseY / feldgroesse;
       if (aktuellerScreen[x][y].lebt == true) {
         aktuellerScreen[x][y].infiziert = true;
       }
